@@ -1,0 +1,72 @@
+import java.nio.file.Paths
+
+plugins {
+    id 'org.gosu-lang.gosu' version '0.3.10'
+}
+
+group 'xyz.ronella.gosu'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url 'https://repo.ronella.xyz/artifactory/java-central/'
+        credentials {
+            username "${artifactoryUsername}"
+            password "${artifactoryPassword}"
+        }
+    }
+}
+
+dependencies {
+    compile group: 'org.gosu-lang.gosu', name: 'gosu-core', version: '1.13.29'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'xyz.ronella.gosu', name: 'gcache', version: '1.0.1'
+    compile fileTree(dir: './libs', include: ['*.jar'])
+
+    testCompile group: 'org.gosu-lang.gosu', name: 'gosu-test', version: '1.13.29'
+    testCompile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.9.1'
+    testRuntime files(Paths.get(JAVA_TOOLS_JAR))
+}
+
+task preparePackage(dependsOn: [jar]) {
+    doLast {
+        def srcDir = sourceSets.main.gosu.sourceDirectories.asPath
+        def destDir = Paths.get(buildDir.absolutePath, "gosu")
+
+        copy {
+            from srcDir
+            into destDir
+        }
+    }
+}
+
+task jarGosu(dependsOn: [preparePackage]) {
+    doLast {
+        def srcDir = Paths.get(buildDir.absolutePath, "gosu")
+        def jarFilename ="${project.name}-${version}"
+        def jarGosuFile = "${jarFilename}-gosu.jar"
+        def javaLibsDir = Paths.get(buildDir.absolutePath, "java-libs")
+        def gosuLibsDir = Paths.get(buildDir.absolutePath, "gosu-libs")
+        def outputGosuFile = Paths.get(gosuLibsDir.toFile().absolutePath, jarGosuFile)
+        def libsDir = Paths.get(buildDir.absolutePath, "libs")
+        def outputFile = Paths.get(libsDir.toFile().absolutePath, "${jarFilename}.jar")
+
+        ant.zip(destfile: outputGosuFile) {
+            fileset(dir: srcDir)
+        }
+
+        ant.move file: outputFile, toDir: javaLibsDir
+
+        copy {
+            from outputGosuFile
+            into libsDir
+            rename { filename ->
+                filename.replace jarGosuFile, "${jarFilename}.jar"
+            }
+        }
+    }
+}
+
+jar.finalizedBy(jarGosu)
