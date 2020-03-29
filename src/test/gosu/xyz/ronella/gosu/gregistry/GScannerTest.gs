@@ -131,6 +131,25 @@ class GScannerTest extends TestClass {
       , true //Should cache
     )
   }
+
+  function testAnnotation1PropValue() {
+    GScanner.Instance.process<Annotation1, AnnotatedClass1>(
+        Annotation1.Type //Annotation Type
+        ,SimpleAnnotationMeta2.Type //Annotation Meta Type
+        , {} //Context
+        , \ ___ctx, ___annotation, ___instance -> { //Execute logic
+      if (___annotation typeis Annotation1) {
+        var prop1 = ___annotation.prop1()
+        assertEquals("2", prop1)
+      }
+      else {
+        throw new AssertionError("Invalid annotation type.")
+      }
+      return false
+    }
+        , true //Should cache
+    )
+  }
   
   function testAnnotationExecuteRecursive() {
     var count = 0
