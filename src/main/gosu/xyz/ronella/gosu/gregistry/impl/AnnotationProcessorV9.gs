@@ -103,7 +103,7 @@ class AnnotationProcessorV9 implements IAnnotationProcessor {
       }
     }
     catch(exp : gw.lang.parser.exceptions.ParseResultsException) {
-      LOG.warn("implemetInterface() method not found.")
+      LOG.trace("implemetInterface() method not found.")
     }
   }
 

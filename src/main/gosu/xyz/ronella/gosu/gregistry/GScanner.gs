@@ -8,9 +8,11 @@ uses java.util.Map
 uses java.lang.Exception
 
 uses gw.lang.reflect.ReflectUtil
+uses gw.lang.reflect.IType
 
 uses org.slf4j.Logger
 uses org.slf4j.LoggerFactory
+uses xyz.ronella.gosu.gcache.ConcurrentLRUCache
 
 /**
  * A utility class of retrieving annotated classes.
@@ -44,7 +46,12 @@ class GScanner {
   private static final var LOCK_CLASS = new ReentrantLock()
   private static var _monitorFlag : boolean as readonly Monitor = false
   private static final var MONITOR_MAX_RETRY : int = 10
-  
+
+  private static var CACHE_REGISTRY_IS_LOADED : boolean
+  private static final var CACHE_REGISTRY_CACHE_SIZE = 10000
+  private static final var CACHE_REGISTRY_CODE = "GSCANNER_REGISTRY"
+  private static final var CACHE_REGISTRY = new ConcurrentLRUCache<String, IType>(CACHE_REGISTRY_CODE, CACHE_REGISTRY_CACHE_SIZE)
+
   private static class MonitorLock {
     construct() {
       using(LOCK_CLASS) {
@@ -101,18 +108,39 @@ class GScanner {
   }
 
   /**
+   * Returns all of the enlisted (i.e. marked as IEnlist) classes.
+   *
+   * @return A list of registered classes.
+   *
+   * @author Ron Webb
+   * @since 2020-03-30
+   */
+  public property get Registry() : List<IType> {
+    if (!CACHE_REGISTRY_IS_LOADED) {
+      using (LOCK_CLASS) {
+        if (!CACHE_REGISTRY_IS_LOADED) {
+          IEnlist.Type.Subtypes.each(\ ___type -> {
+            CACHE_REGISTRY.put(___type.Name, ___type)
+          })
+          CACHE_REGISTRY_IS_LOADED = true
+        }
+      }
+    }
+    return CACHE_REGISTRY.values()?.toList()
+  }
+
+  /**
    * The method for extracting gregistry.
    * @param annotation The type of the gregistry.
    * @param annotationMeta A subtype of AbstractAnnotationMeta to override the default generation of IAnnotationMeta.
    * @return A collection of an instance of IAnnotationMeta.
    */  
   public function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>, annotationMeta : Type<AbstractAnnotationMetaBase>) : List<IAnnotationMetaBase> {
-    LOG.debug("public function extract(_annotation : Type<IAnnotation>, annotationMeta : Type<AbstractAnnotationMeta>) : List<IAnnotationMeta>")
+    LOG.debug("public function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>, annotationMeta : Type<AbstractAnnotationMetaBase>) : List<IAnnotationMetaBase>")
 
     waiter()
 
     var processor = AnnotationProcessorArbiter.processor(_annotation)
-    
     var annotationMetas = processor.retrieveMeta(_annotation)
     
     if (_annotation==null || annotationMeta==null) {
@@ -136,7 +164,7 @@ class GScanner {
               }            
             }
 
-            IEnlist.Type.Subtypes.where(\__type -> __type.TypeInfo.getAnnotation(_annotation)!=null)?.each(\ __type -> {
+            Registry.where(\__type -> __type.TypeInfo.getAnnotation(_annotation)!=null)?.each(\ __type -> {
               var fqClassName = __type?.Name
               var annotationInstance = processor.annotationInfoInstance(__type, _annotation)
               
@@ -159,7 +187,6 @@ class GScanner {
           
             //Cache empty if no classes were marked by the gregistry.
             cacheMetas()
-
           }
         }
       }
@@ -172,7 +199,11 @@ class GScanner {
    * Method for the clearing the whole cache.
    */
   public static function clearCache() {
-    AnnotationProcessorArbiter.clear()
+    using(LOCK_CLASS) {
+      AnnotationProcessorArbiter.clear()
+      CACHE_REGISTRY.clear()
+      CACHE_REGISTRY_IS_LOADED = false
+    }
   }
   
   /**
