@@ -77,7 +77,6 @@ class GScannerTest extends TestClass {
     assertTrue(AnnotationProcessorV9.Instance.retrieveMeta(Annotation3.Type)?.first() typeis SimpleAnnotationMeta2)
   }
 
-  /*
   function testAnnotationInterfaceExecute() {
     assertCausesException(\ -> {
       GScanner.Instance.process<Annotation3, AnnotatedClass2>(
@@ -91,7 +90,6 @@ class GScannerTest extends TestClass {
       )
     }, ExpectedTypeException)
   }
-*/
 
   function testAnnotationExecuteContext() {
     GScanner.Instance.process<Annotation1, AnnotatedClass1>(

@@ -153,7 +153,7 @@ class GScanner {
             
               annotationMetaInstance.AnnotationInfo = annotationInstance
               annotationMetaInstance.ClassType = __type
-            
+
               annotationMetas.add(annotationMetaInstance)
             })
           
@@ -297,7 +297,8 @@ class GScanner {
         ctx.put(GScanner.CTX_STATUS, ProcessStatus.PROCESSING)
 
         var __annotation = ___meta.AnnotationInfo
-        var className = ___meta.ClassType.Name
+        var classType = ___meta.ClassType
+        var className = classType.Name
         var objInstance : Object = processor.retrieveInstance(className)
       
         if (LOG.DebugEnabled && objInstance!=null) {
@@ -317,7 +318,7 @@ class GScanner {
             throw new ObjectMustBeSerializableException(className)
           }
 
-          processor.validate(ctx, __annotation, objInstance)
+          processor.validate(ctx, classType, _annotation)
 
           if (shouldCache) {
             using(LOCK_CLASS) {

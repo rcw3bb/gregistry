@@ -80,7 +80,7 @@ class AnnotationProcessorV7 implements IAnnotationProcessor {
     return SimpleAnnotationMeta.Type as Type<TYPE_ANNOTATION_BASE>
   }
 
-  override function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, tag : TYPE_ANNOTATION, objInstance : Object) {
+  override function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>) {
   }
 
   override function annotationInfoInstance<TYPE_ANNOTATION>(type : IType, tag : Type<TYPE_ANNOTATION>) : Object {

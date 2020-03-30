@@ -1,13 +1,17 @@
 package xyz.ronella.gosu.gregistry.impl
 
+uses org.slf4j.Logger
+uses org.slf4j.LoggerFactory
 uses xyz.ronella.gosu.gregistry.AbstractAnnotationMetaBase
 uses xyz.ronella.gosu.gregistry.IAnnotationMetaBase
 uses xyz.ronella.gosu.gregistry.IAnnotationProcessor
 uses xyz.ronella.gosu.gcache.ConcurrentLRUCache
+uses xyz.ronella.gosu.gregistry.ExpectedTypeException
 
 uses gw.lang.reflect.IType
 uses java.util.concurrent.locks.ReentrantLock
 uses java.util.Map
+uses gw.lang.reflect.TypeSystem
 
 /**
  * A processor designed for GWv9.
@@ -16,6 +20,8 @@ uses java.util.Map
  * @since 2018-06-28
  */
 class AnnotationProcessorV9 implements IAnnotationProcessor {
+
+  private final static var LOG : Logger = LoggerFactory.getLogger("AnnotationProcessorV9")
 
   private construct() {}
 
@@ -83,7 +89,22 @@ class AnnotationProcessorV9 implements IAnnotationProcessor {
     return SimpleAnnotationMeta2.Type as Type<TYPE_ANNOTATION_BASE>
   }
 
-  override function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, tag : TYPE_ANNOTATION, objInstance : Object) {
+  override function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>) {
+    var annotationInstance = annotationInfoInstance<TYPE_ANNOTATION>(type, tag)
+    var annotationName = TYPE_ANNOTATION.Name
+    var evalText = "(annotationInstance as ${annotationName}).implementInterface()"
+    try {
+      var implementInterface = eval(evalText) as String
+      var interfaceType = TypeSystem.getByFullName(implementInterface)
+      var typeHasInterfaceType = type.Interfaces.hasMatch(\ ___interface -> ___interface.Name == interfaceType.Name)
+      if (!typeHasInterfaceType) {
+        var message = "${annotationName} requires ${interfaceType.Name}"
+        throw new ExpectedTypeException(message)
+      }
+    }
+    catch(exp : gw.lang.parser.exceptions.ParseResultsException) {
+      LOG.warn("implemetInterface() method not found.")
+    }
   }
 
   override function annotationInfoInstance<TYPE_ANNOTATION>(type : IType, tag : Type<TYPE_ANNOTATION>) : Object {

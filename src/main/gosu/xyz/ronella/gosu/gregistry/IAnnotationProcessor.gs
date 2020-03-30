@@ -102,19 +102,19 @@ interface IAnnotationProcessor {
    * Must hold the implementation on how the validate the particular gregistry associated to an object.
    *
    * @param ctx This is the context passed by the GScanner.
-   * @param tag The target gregistry.
-   * @param objInstance The object instance associated with the gregistry.
-   * @param <TYPE_ANNOTATION> The type of the target gregistry.
+   * @param type The Type of the object associated with the annotation.
+   * @param tag The target annotation.
+   * @param <TYPE_ANNOTATION> The type of the target annotation.
    *
    * @author Ron Webb
    * @since 2018-06-28
    */
-  function validate<TYPE_ANNOTATION>(ctx: Map<String, Object>, tag : TYPE_ANNOTATION, objInstance : Object)
+  function validate<TYPE_ANNOTATION>(ctx: Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>)
 
   /**
    * Must return the correct instance of the gregistry information.
-   * @param type The Type of the object associated with the gregistry.
-   * @param tag The target gregistry.
+   * @param type The Type of the object associated with the annotation.
+   * @param tag The target annotation.
    * @param <TYPE_ANNOTATION> The type of the target gregistry.
    * @return The correct instance of gregistry information.
    *
