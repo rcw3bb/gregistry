@@ -192,23 +192,6 @@ class GScannerTest extends TestClass {
     )
   }
 
-  /*
-  function testNonSerializedAnnotation() {
-    assertCausesException(\ -> {
-      GScanner.Instance.process<Annotation7, AnnotatedClass7>(
-        Annotation7.Type //Annotation Type
-        ,SimpleAnnotationMeta2.Type //Annotation Meta Type
-        , {} //Context
-        , \ ___ctx, ___annotation, ___instance -> { //Execute logic
-          assertTrue(___instance typeis AnnotatedClass7)
-          return true
-        }
-        , true //Should cache
-      )  
-    }, ObjectMustBeSerializableException)
-  }
-  */
-
   function testNonSerializedAnnotatedClass() {
     assertCausesException(\ -> {
       GScanner.Instance.process<Annotation8, AnnotatedClass8>(

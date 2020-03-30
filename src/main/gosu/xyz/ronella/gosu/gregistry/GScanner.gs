@@ -316,7 +316,6 @@ class GScanner {
     , ctx : Map<String, Object>
     , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
-
     var processor = AnnotationProcessorArbiter.processor(_annotation)
 
     ctx=ctx?:{}
@@ -326,7 +325,6 @@ class GScanner {
     if (metas!=null) {
       for (___meta in metas) {
         ctx.put(GScanner.CTX_STATUS, ProcessStatus.PROCESSING)
-
         var __annotation = ___meta.AnnotationInfo
         var classType = ___meta.ClassType
         var className = classType.Name
@@ -342,7 +340,6 @@ class GScanner {
     
         if (objInstance==null) {
           LOG.debug("Cache MISS for " + className)
-          
           objInstance = ReflectUtil.construct(className, {})
           
           if (!(objInstance typeis Serializable)) {
@@ -377,31 +374,39 @@ class GScanner {
         }
       }
     }
+    return new ProcessOutput(ctx)
+  }
 
-    if ((ctx.get(GScanner.CTX_STATUS) as ProcessStatus) != ProcessStatus.ERROR) {
-      ctx.put(GScanner.CTX_STATUS, ProcessStatus.NORMAL_TERMINATION)
+  private static class ProcessOutput implements IProcessOutput {
+
+    private var _context : Map<String, Object>
+
+    construct(context : Map<String, Object>) {
+      this._context = context
+
+      if ((_context.get(GScanner.CTX_STATUS) as ProcessStatus) != ProcessStatus.ERROR) {
+        _context.put(GScanner.CTX_STATUS, ProcessStatus.NORMAL_TERMINATION)
+      }
+
+      if (_context.get(GScanner.CTX_SUB_STATUS)==null) {
+        _context.put(GScanner.CTX_SUB_STATUS, _context.get(GScanner.CTX_STATUS))
+      }
     }
-    
-    if (ctx.get(GScanner.CTX_SUB_STATUS)==null) {
-      ctx.put(GScanner.CTX_SUB_STATUS, ctx.get(GScanner.CTX_STATUS))
+
+    override property get Context() : Map<String, Object> {
+      return _context
     }
 
-    return new IProcessOutput() {
-      override property get Context() : Map<String, Object> {
-        return ctx
-      }
-      
-      override property get Status() : ProcessStatus {
-        return ctx.get(GScanner.CTX_STATUS) as ProcessStatus
-      }
+    override property get Status() : ProcessStatus {
+      return _context.get(GScanner.CTX_STATUS) as ProcessStatus
+    }
 
-      override property get SubStatus() : ProcessStatus {
-        return ctx.get(GScanner.CTX_SUB_STATUS) as ProcessStatus
-      }
-      
-      override property get ErrorMessage() : String {
-        return ctx.get(GScanner.CTX_ERROR_MSG) as String
-      }
+    override property get SubStatus() : ProcessStatus {
+      return _context.get(GScanner.CTX_SUB_STATUS) as ProcessStatus
+    }
+
+    override property get ErrorMessage() : String {
+      return _context.get(GScanner.CTX_ERROR_MSG) as String
     }
   }
 
