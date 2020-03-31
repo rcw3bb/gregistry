@@ -9,13 +9,11 @@ class GScannerTest extends TestClass {
   
   override function beforeTestMethod() {
     super.beforeTestMethod()
-    GScanner.TestMode = true
     GScanner.clearCache()
   }
 
   override function afterTestMethod(thrown : Throwable) {
     super.afterTestMethod(thrown)
-    GScanner.TestMode = false
   }
   
   function testAnnotation1ExtractCount() {

@@ -55,17 +55,4 @@ class AnnotationProcessorArbiter {
     }
   }
 
-  /**
-   * Retrieves associated IAnnotationMetaBases to an gregistry.
-   * @param tag The target gregistry.
-   * @param <TYPE_ANNOTATION> The type of the target gregistry.
-   * @return A list of IAnnotationMetaBases.
-   *
-   * @author Ron Webb
-   * @since 2018-06-28
-   */
-  public static function retrieveMetas<TYPE_ANNOTATION>(tag : Type<TYPE_ANNOTATION>) : List<IAnnotationMetaBase> {
-    return processor(tag).Metas.get(tag)
-  }
-
 }

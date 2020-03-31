@@ -20,11 +20,6 @@ uses xyz.ronella.gosu.gcache.ConcurrentLRUCache
  * @since 2016-06-20
  */
 class GScanner {
-  
-  /**
-   * The field for telling the gregistry util to run in test mode. When set to true, this will look in gtest folder not gsrc.
-   */
-  public static var TestMode : boolean = false  
 
   /**
    * The field for storing the processing status.
