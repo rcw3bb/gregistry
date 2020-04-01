@@ -78,12 +78,12 @@ The implementation of this interface holds the status after completing the execu
 | ----------- | ---------------- |
 | Group ID    | xyz.ronella.gosu |
 | Artifact ID | gregistry        |
-| Version     | 1.0.0            |
+| Version     | 1.1.0            |
 
 > Using gradle, this can be added as a dependency entry like the following:
 >
 > ```groovy
-> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.0.0'
+> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.1.0'
 > ```
 
 #### Sample Usage
