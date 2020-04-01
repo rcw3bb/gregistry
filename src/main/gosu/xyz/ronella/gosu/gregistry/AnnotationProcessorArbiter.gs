@@ -25,7 +25,7 @@ class AnnotationProcessorArbiter {
   private static var REGISTRY = {
       "V7" -> AnnotationProcessorV7.Instance      //GW7 Compatible
       ,"V9" -> AnnotationProcessorV9.Instance     //GW9 Compatible
-  } as Map<String, IAnnotationProcessor>
+  }
 
   private construct() {}
 

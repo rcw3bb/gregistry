@@ -85,34 +85,32 @@ class AnnotationProcessorV9 implements IAnnotationProcessor {
     }
   }
 
-  override function defaultAnnotationMetaBase<TYPE_ANNOTATION_BASE extends AbstractAnnotationMetaBase>() : Type<TYPE_ANNOTATION_BASE> {
+  override reified function defaultAnnotationMetaBase<TYPE_ANNOTATION_BASE extends AbstractAnnotationMetaBase>() : Type<TYPE_ANNOTATION_BASE> {
     return SimpleAnnotationMeta2.Type as Type<TYPE_ANNOTATION_BASE>
   }
 
-  override function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>) {
+  override reified function validate<TYPE_ANNOTATION>(ctx : Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>) {
     var annotationInstance = annotationInfoInstance<TYPE_ANNOTATION>(type, tag)
     var annotationName = TYPE_ANNOTATION.Name
     var evalText = "(annotationInstance as ${annotationName}).implementInterface()"
-    try {
+
+    if (tag.TypeInfo.Methods.hasMatch(\___method -> ___method.Name == "implementInterface()")) {
       var implementInterface = eval(evalText) as String
       var interfaceType = TypeSystem.getByFullName(implementInterface)
-      var typeHasInterfaceType = type.Interfaces.hasMatch(\ ___interface -> ___interface.Name == interfaceType.Name)
+      var typeHasInterfaceType = type.Interfaces.hasMatch(\___interface -> ___interface.Name == interfaceType.Name)
       if (!typeHasInterfaceType) {
         var message = "${annotationName} requires ${interfaceType.Name}"
         throw new ExpectedTypeException(message)
       }
     }
-    catch(exp : gw.lang.parser.exceptions.ParseResultsException) {
-      LOG.trace("implemetInterface() method not found.")
-    }
   }
 
-  override function annotationInfoInstance<TYPE_ANNOTATION>(type : IType, tag : Type<TYPE_ANNOTATION>) : Object {
+  override reified function annotationInfoInstance<TYPE_ANNOTATION>(type : IType, tag : Type<TYPE_ANNOTATION>) : Object {
     return type.TypeInfo.getAnnotation(tag).Instance
   }
 
   override property get Version() : String {
-    return "GW9+"
+    return "GW10+"
   }
 
 }

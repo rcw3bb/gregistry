@@ -96,7 +96,7 @@ interface IAnnotationProcessor {
    * @author Ron Webb
    * @since 2018-06-28
    */
-  function defaultAnnotationMetaBase<TYPE_ANNOTATION_BASE extends AbstractAnnotationMetaBase>() : Type<TYPE_ANNOTATION_BASE>
+  reified function defaultAnnotationMetaBase<TYPE_ANNOTATION_BASE extends AbstractAnnotationMetaBase>() : Type<TYPE_ANNOTATION_BASE>
 
   /**
    * Must hold the implementation on how the validate the particular gregistry associated to an object.
@@ -109,7 +109,7 @@ interface IAnnotationProcessor {
    * @author Ron Webb
    * @since 2018-06-28
    */
-  function validate<TYPE_ANNOTATION>(ctx: Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>)
+  reified function validate<TYPE_ANNOTATION>(ctx: Map<String, Object>, type : IType, tag : Type<TYPE_ANNOTATION>)
 
   /**
    * Must return the correct instance of the gregistry information.
@@ -121,7 +121,7 @@ interface IAnnotationProcessor {
    * @author Ron Webb
    * @since 2018-06-28
    */
-  function annotationInfoInstance<TYPE_ANNOTATION>(type: IType, tag : Type<TYPE_ANNOTATION>) : Object
+  reified function annotationInfoInstance<TYPE_ANNOTATION>(type: IType, tag : Type<TYPE_ANNOTATION>) : Object
 
   /**
    * Must return the identifiable version of the processor.

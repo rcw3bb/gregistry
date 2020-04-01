@@ -84,7 +84,7 @@ class GScanner {
    * @param annotation The type of the gregistry.
    * @return A collection of an instance of IAnnotationMeta.
    */
-  public function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>) : List<IAnnotationMetaBase> {
+  public reified function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>) : List<IAnnotationMetaBase> {
     return extract(_annotation, AnnotationProcessorArbiter.processor(_annotation).defaultAnnotationMetaBase())
   }
 
@@ -130,7 +130,7 @@ class GScanner {
    * @param annotationMeta A subtype of AbstractAnnotationMeta to override the default generation of IAnnotationMeta.
    * @return A collection of an instance of IAnnotationMeta.
    */  
-  public function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>, annotationMeta : Type<AbstractAnnotationMetaBase>) : List<IAnnotationMetaBase> {
+  public reified function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>, annotationMeta : Type<AbstractAnnotationMetaBase>) : List<IAnnotationMetaBase> {
     LOG.debug("public function extract<TYPE_ANNOTATION>(_annotation : Type<TYPE_ANNOTATION>, annotationMeta : Type<AbstractAnnotationMetaBase>) : List<IAnnotationMetaBase>")
 
     waiter()
@@ -154,7 +154,7 @@ class GScanner {
             var cacheMetas = \ -> {
               if (annotationMetas==null) {
                 annotationMetas = new ArrayList<IAnnotationMeta>()
-                LOG.info("Caching [${processor.Version}] ${_annotation.Name}")
+                LOG.info("Caching [${processor.Version}] ${_annotation.Type.Name}")
                 processor.storeMeta(_annotation, annotationMetas)
               }            
             }
@@ -167,7 +167,7 @@ class GScanner {
                 throw new ObjectMustBeSerializableException(fqClassName)
               }
               
-              var annotationMetaName = annotationMeta?.Name
+              var annotationMetaName = annotationMeta?.Type?.Name
               var annotationMetaInstance = ReflectUtil.construct(annotationMetaName, {}) as AbstractAnnotationMetaBase
             
               annotationMetas = processor.retrieveMeta(_annotation)
@@ -208,7 +208,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2017-03-2017
    */
-  public static function clearCacheByType<TYPE_ANNOTATION>(pType : Type<TYPE_ANNOTATION>) {
+  public reified static function clearCacheByType<TYPE_ANNOTATION>(pType : Type<TYPE_ANNOTATION>) {
     AnnotationProcessorArbiter.processor(pType).clearByType(pType)
   }
 
@@ -220,7 +220,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */
-  public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, {}, exec)
@@ -235,7 +235,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */
-  public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
@@ -251,7 +251,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */
-   public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+   public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
        _annotation : Type<TYPE_ANNOTATION>
     , ctx : Map<String, Object>
     , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
@@ -268,7 +268,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */  
-  public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , ctx : Map<String, Object>
     , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
@@ -286,7 +286,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */
-  public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , annotationMeta : Type<AbstractAnnotationMetaBase>
     , ctx : Map<String, Object>
@@ -305,7 +305,7 @@ class GScanner {
    * @author Ron Webb
    * @since 2016-06-30
    */
-  public function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , annotationMeta : Type<AbstractAnnotationMetaBase>
     , ctx : Map<String, Object>
