@@ -222,7 +222,7 @@ class GScanner {
    */
   public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, {}, exec)
   }
   
@@ -237,7 +237,7 @@ class GScanner {
    */
   public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, {}, exec, shouldCache)
   }  
@@ -254,7 +254,7 @@ class GScanner {
    public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
        _annotation : Type<TYPE_ANNOTATION>
     , ctx : Map<String, Object>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, AnnotationProcessorArbiter.processor(_annotation).defaultAnnotationMetaBase(), ctx, exec)
   }
   
@@ -271,7 +271,7 @@ class GScanner {
   public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
       _annotation : Type<TYPE_ANNOTATION>
     , ctx : Map<String, Object>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, AnnotationProcessorArbiter.processor(_annotation).defaultAnnotationMetaBase(), ctx, exec, shouldCache)
   }  
@@ -290,7 +290,7 @@ class GScanner {
       _annotation : Type<TYPE_ANNOTATION>
     , annotationMeta : Type<AbstractAnnotationMetaBase>
     , ctx : Map<String, Object>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, annotationMeta, ctx, exec, true)
   }
 
@@ -309,7 +309,7 @@ class GScanner {
       _annotation : Type<TYPE_ANNOTATION>
     , annotationMeta : Type<AbstractAnnotationMetaBase>
     , ctx : Map<String, Object>
-    , exec(___ctx : Map<String, Object>, ___annotation : Object, obj : TYPE_OBJECT) : boolean
+    , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
     var processor = AnnotationProcessorArbiter.processor(_annotation)
 
@@ -351,7 +351,7 @@ class GScanner {
         }
         try {
           try {
-            if (!exec(ctx, __annotation, objInstance as TYPE_OBJECT)) {
+            if (!exec(ctx, __annotation as TYPE_ANNOTATION, objInstance as TYPE_OBJECT)) {
               ctx.put(GScanner.CTX_SUB_STATUS, ProcessStatus.CUT_SHORT)
               break
             }
