@@ -214,6 +214,18 @@ class GScanner {
 
   /**
    * A method for processing the gregistry and its associated class instance. This is always caching.
+   * @param exec(context, annotationInstance, classInstance) The function to execute for each instance of associated class with the gregistry.
+   * @return An instance of IProcessOutput (i.e. IProcessOutput.Status==ProcessStatus.NORMAL_TERMINATION if everything is successful).
+   * @author Ron Webb
+   * @since 2020-04-02
+   */
+  public reified function process<TYPE_ANNOTATION, TYPE_OBJECT>(
+      exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean) : IProcessOutput {
+    return process<TYPE_ANNOTATION, TYPE_OBJECT>(TYPE_ANNOTATION, {}, exec)
+  }
+
+  /**
+   * A method for processing the gregistry and its associated class instance. This is always caching.
    * @param annotation The type of gregistry.
    * @param exec(context, annotationInstance, classInstance) The function to execute for each instance of associated class with the gregistry.
    * @return An instance of IProcessOutput (i.e. IProcessOutput.Status==ProcessStatus.NORMAL_TERMINATION if everything is successful).

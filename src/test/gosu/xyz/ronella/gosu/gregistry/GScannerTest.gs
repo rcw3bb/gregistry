@@ -91,17 +91,17 @@ class GScannerTest extends TestClass {
 
   function testAnnotationExecuteContext() {
     GScanner.Instance.process<Annotation1, AnnotatedClass1>(
-      Annotation1.Type //Annotation Type
-      ,SimpleAnnotationMeta2.Type //Annotation Meta Type
-      , {"CTX" -> "THE_CTX"} //Context
-      , \ ___ctx, ___annotation, ___instance -> { //Execute logic
-        assertEquals(___ctx["CTX"], "THE_CTX")
-        return false 
-      }
-      , true //Should cache
+        Annotation1.Type //Annotation Type
+        ,SimpleAnnotationMeta2.Type //Annotation Meta Type
+        , {"CTX" -> "THE_CTX"} //Context
+        , \ ___ctx, ___annotation, ___instance -> { //Execute logic
+      assertEquals(___ctx["CTX"], "THE_CTX")
+      return false
+    }
+        , true //Should cache
     )
   }
- 
+
   function testAnnotationExecuteAnnotationType() {
     GScanner.Instance.process<Annotation1, AnnotatedClass1>(
       Annotation1.Type //Annotation Type
@@ -188,6 +188,15 @@ class GScannerTest extends TestClass {
       }
       , true //Should cache
     )
+  }
+
+  function testExecParameterOnly() {
+    var isProcessed : boolean
+    GScanner.Instance.process<Annotation6, IAnnotation6>(\ ___ctx, ___annotation, ___instance -> { //Execute logic
+      isProcessed = true
+      return true
+    })
+    assertTrue(isProcessed)
   }
 
   function testNonSerializedAnnotatedClass() {
