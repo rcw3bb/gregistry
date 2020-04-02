@@ -2,6 +2,7 @@ package xyz.ronella.gosu.gregistry.impl
 
 uses gw.lang.reflect.IType
 uses xyz.ronella.gosu.gregistry.AbstractAnnotationMetaBase
+uses xyz.ronella.gosu.gregistry.GRegistryConfig
 uses xyz.ronella.gosu.gregistry.IAnnotationMetaBase
 uses xyz.ronella.gosu.gregistry.IAnnotationProcessor
 uses java.util.concurrent.locks.ReentrantLock
@@ -25,13 +26,15 @@ class AnnotationProcessorV7 implements IAnnotationProcessor {
   }
 
   private static final var LOCK_CLASS = new ReentrantLock()
-  private static final var DEFAULT_CACHE_SIZE = 1000
+
+  private static final var DEFAULT_INSTANCE_CACHE_SIZE = GRegistryConfig.InstanceCacheSize
+  private static final var DEFAULT_TAG_META_CACHE_SIZE = GRegistryConfig.TagMetaCacheSize
 
   private static final var CACHE_INSTANCE_CODE = "InstanceStashV7"
-  private static final var CACHE_INSTANCE  = new ConcurrentLRUCache<String, Object>(CACHE_INSTANCE_CODE, DEFAULT_CACHE_SIZE)
+  private static final var CACHE_INSTANCE  = new ConcurrentLRUCache<String, Object>(CACHE_INSTANCE_CODE, DEFAULT_INSTANCE_CACHE_SIZE)
 
   private static final var CACHE_META_CODE = "MetadataStashV7"
-  private static final var CACHE_META = new ConcurrentLRUCache<String,List<IAnnotationMetaBase>>(CACHE_META_CODE, DEFAULT_CACHE_SIZE)
+  private static final var CACHE_META = new ConcurrentLRUCache<String,List<IAnnotationMetaBase>>(CACHE_META_CODE, DEFAULT_TAG_META_CACHE_SIZE)
 
   override property get Metas() : ConcurrentLRUCache<String,List<IAnnotationMetaBase>> {
     return CACHE_META

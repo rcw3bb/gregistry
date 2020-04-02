@@ -49,9 +49,9 @@ class GScanner {
   private static final var MONITOR_MAX_RETRY : int = 10
 
   private static var CACHE_REGISTRY_IS_LOADED : boolean
-  private static final var CACHE_REGISTRY_CACHE_SIZE = 10000
+  private static final var CACHE_REGISTRY_CACHE_SIZE = GRegistryConfig.EnlistCacheSize
   private static final var CACHE_REGISTRY_CODE = "GSCANNER_REGISTRY"
-  private static final var CACHE_REGISTRY = new ConcurrentLRUCache<String, IType>(CACHE_REGISTRY_CODE, CACHE_REGISTRY_CACHE_SIZE)
+  private static var CACHE_REGISTRY = new ConcurrentLRUCache<String, IType>(CACHE_REGISTRY_CODE, CACHE_REGISTRY_CACHE_SIZE)
 
   private static class MonitorLock {
     construct() {
@@ -202,7 +202,7 @@ class GScanner {
   public static function clearCache() {
     using(LOCK_CLASS) {
       AnnotationProcessorArbiter.clear()
-      CACHE_REGISTRY.clear()
+      CACHE_REGISTRY?.clear()
       CACHE_REGISTRY_IS_LOADED = false
     }
   }

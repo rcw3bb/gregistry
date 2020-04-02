@@ -5,8 +5,6 @@ package xyz.ronella.gosu.gregistry;
  */
 import gw.test.TestClass;
 
-import java.io.Serializable;
-
 public class PackageResolutionTest extends TestClass {
 
     public void testSimple() {
