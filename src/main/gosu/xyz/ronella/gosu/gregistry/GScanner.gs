@@ -35,6 +35,11 @@ class GScanner {
    * The field for storing the error message.
    */
   public static final var CTX_ERROR_MSG : String = "xyz.ronella.gosu.gregistry.GScanner.CTX_ERROR_MSG"
+
+  /**
+   * The field for storing the current count of the class that is being processed.
+   */
+  public static final var CTX_CLASS_INDEX : String = "xyz.ronella.gosu.gregistry.GScanner.CTX_CLASS_INDEX"
   
   private final static var LOG : Logger = LoggerFactory.getLogger("GScanner")
   private static var ANNOTATION_UTIL : GScanner
@@ -332,6 +337,7 @@ class GScanner {
     if (metas!=null) {
       for (___meta in metas) {
         ctx.put(GScanner.CTX_STATUS, ProcessStatus.PROCESSING)
+        ctx.put(GScanner.CTX_CLASS_INDEX, (ctx.getOrDefault(GScanner.CTX_CLASS_INDEX, 0) as int) + 1)
         var __annotation = ___meta.AnnotationInfo
         var classType = ___meta.ClassType
         var className = classType.Name

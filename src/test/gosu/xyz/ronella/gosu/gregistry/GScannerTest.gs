@@ -199,6 +199,13 @@ class GScannerTest extends TestClass {
     assertTrue(isProcessed)
   }
 
+  function testClassIndex() {
+    var output = GScanner.Instance.process<Annotation6, IAnnotation6>(\ ___ctx, ___annotation, ___instance -> { //Execute logic
+      return true
+    })
+    assertEquals(2,output.Context.get(GScanner.CTX_CLASS_INDEX) as int)
+  }
+
   function testNonSerializedAnnotatedClass() {
     assertCausesException(\ -> {
       GScanner.Instance.process<Annotation8, AnnotatedClass8>(
