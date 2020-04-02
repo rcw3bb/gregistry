@@ -199,11 +199,18 @@ class GScannerTest extends TestClass {
     assertTrue(isProcessed)
   }
 
-  function testClassIndex() {
+  function testClassIndexForAnnotation6() {
     var output = GScanner.Instance.process<Annotation6, IAnnotation6>(\ ___ctx, ___annotation, ___instance -> { //Execute logic
       return true
     })
-    assertEquals(2,output.Context.get(GScanner.CTX_CLASS_INDEX) as int)
+    assertEquals(2, output.Context.get(GScanner.CTX_CLASS_INDEX(Annotation6.Name)) as int)
+  }
+
+  function testClassIndexForAnnotation7() {
+    var output = GScanner.Instance.process<Annotation7, Object>(\ ___ctx, ___annotation, ___instance -> { //Execute logic
+      return true
+    })
+    assertEquals(1, output.Context.get(GScanner.CTX_CLASS_INDEX(Annotation7.Name)) as int)
   }
 
   function testNonSerializedAnnotatedClass() {
