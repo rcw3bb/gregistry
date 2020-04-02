@@ -24,17 +24,20 @@ class GScanner {
   /**
    * The field for storing the processing status.
    */
-  public static final var CTX_STATUS : String = "xyz.ronella.gosu.gregistry.GScanner.CTX_STATUS"
+  public static final var CTX_STATUS : block(___annotation: String) : String =
+      \ ___annotation : String -> "xyz.ronella.gosu.gregistry.GScanner.CTX_STATUS.${___annotation}"
   
   /**
    * The field for storing the sub processing status.
    */
-  public static final var CTX_SUB_STATUS : String = "xyz.ronella.gosu.gregistry.GScanner.CTX_SUB_STATUS"
+  public static final var CTX_SUB_STATUS : block(___annotation: String) : String =
+      \ ___annotation : String -> "xyz.ronella.gosu.gregistry.GScanner.CTX_SUB_STATUS.${___annotation}"
 
   /**
    * The field for storing the error message.
    */
-  public static final var CTX_ERROR_MSG : String = "xyz.ronella.gosu.gregistry.GScanner.CTX_ERROR_MSG"
+  public static final var CTX_ERROR_MSG : block(___annotation: String) : String =
+      \ ___annotation : String -> "xyz.ronella.gosu.gregistry.GScanner.CTX_ERROR_MSG.${___annotation}"
 
   /**
    * The field for storing the current count of the class that is being processed.
@@ -312,6 +315,12 @@ class GScanner {
     return process<TYPE_ANNOTATION, TYPE_OBJECT>(_annotation, annotationMeta, ctx, exec, true)
   }
 
+  private function setProcessContext(annotationName: String, ctx: Map<String, Object>) {
+    ctx.put(GScanner.CTX_STATUS(annotationName), ProcessStatus.PROCESSING)
+    ctx.put(GScanner.CTX_CLASS_INDEX(annotationName)
+        , (ctx.getOrDefault(GScanner.CTX_CLASS_INDEX(annotationName), 0) as int) + 1)
+  }
+
   /**
    * A method for processing the gregistry and its associated class instance.
    * @param annotation The type of gregistry.
@@ -330,16 +339,14 @@ class GScanner {
     , exec(___ctx : Map<String, Object>, ___annotation : TYPE_ANNOTATION, obj : TYPE_OBJECT) : boolean
     , shouldCache : boolean) : IProcessOutput {
     var processor = AnnotationProcessorArbiter.processor(_annotation)
-
+    var annotationName = _annotation.Name
     ctx=ctx?:{}
-    ctx.put(GScanner.CTX_STATUS, ProcessStatus.IDLE)
+    ctx.put(GScanner.CTX_STATUS(annotationName), ProcessStatus.IDLE)
     
     var metas = GScanner.Instance.extract<TYPE_ANNOTATION>(_annotation, annotationMeta)
     if (metas!=null) {
       for (___meta in metas) {
-        ctx.put(GScanner.CTX_STATUS, ProcessStatus.PROCESSING)
-        ctx.put(GScanner.CTX_CLASS_INDEX(_annotation.Name)
-            , (ctx.getOrDefault(GScanner.CTX_CLASS_INDEX(_annotation.Name), 0) as int) + 1)
+        setProcessContext(annotationName, ctx)
         var __annotation = ___meta.AnnotationInfo
         var classType = ___meta.ClassType
         var className = classType.Name
@@ -372,7 +379,7 @@ class GScanner {
         try {
           try {
             if (!exec(ctx, __annotation as TYPE_ANNOTATION, objInstance as TYPE_OBJECT)) {
-              ctx.put(GScanner.CTX_SUB_STATUS, ProcessStatus.CUT_SHORT)
+              ctx.put(GScanner.CTX_SUB_STATUS(annotationName), ProcessStatus.CUT_SHORT)
               break
             }
           }
@@ -382,29 +389,37 @@ class GScanner {
           }
         }
         catch (pe : ProcessException) {
-          ctx.put(GScanner.CTX_STATUS, ProcessStatus.ERROR)
-          ctx.put(GScanner.CTX_ERROR_MSG, pe.Message?:"Error processing " + className)
+          setErrorContext(annotationName, className, ctx, pe)
           LOG.error(pe.StackTraceAsString)
           break
         }
       }
     }
-    return new ProcessOutput(ctx)
+    return new ProcessOutput(annotationName, ctx)
+  }
+
+  private function setErrorContext(annotationName : String, className: String, ctx : Map<String, Object>,
+                                   pe: ProcessException) {
+
+    ctx.put(GScanner.CTX_STATUS(annotationName), ProcessStatus.ERROR)
+    ctx.put(GScanner.CTX_ERROR_MSG(annotationName), pe.Message?:"Error processing " + className)
   }
 
   private static class ProcessOutput implements IProcessOutput {
 
     private var _context : Map<String, Object>
+    private var _annotationName : String
 
-    construct(context : Map<String, Object>) {
+    construct(annotationName: String, context : Map<String, Object>) {
       this._context = context
+      this._annotationName = annotationName
 
-      if ((_context.get(GScanner.CTX_STATUS) as ProcessStatus) != ProcessStatus.ERROR) {
-        _context.put(GScanner.CTX_STATUS, ProcessStatus.NORMAL_TERMINATION)
+      if ((_context.get(GScanner.CTX_STATUS(_annotationName)) as ProcessStatus) != ProcessStatus.ERROR) {
+        _context.put(GScanner.CTX_STATUS(_annotationName), ProcessStatus.NORMAL_TERMINATION)
       }
 
-      if (_context.get(GScanner.CTX_SUB_STATUS)==null) {
-        _context.put(GScanner.CTX_SUB_STATUS, _context.get(GScanner.CTX_STATUS))
+      if (_context.get(GScanner.CTX_SUB_STATUS(_annotationName))==null) {
+        _context.put(GScanner.CTX_SUB_STATUS(_annotationName), _context.get(GScanner.CTX_STATUS(_annotationName)))
       }
     }
 
@@ -413,15 +428,15 @@ class GScanner {
     }
 
     override property get Status() : ProcessStatus {
-      return _context.get(GScanner.CTX_STATUS) as ProcessStatus
+      return _context.get(GScanner.CTX_STATUS(_annotationName)) as ProcessStatus
     }
 
     override property get SubStatus() : ProcessStatus {
-      return _context.get(GScanner.CTX_SUB_STATUS) as ProcessStatus
+      return _context.get(GScanner.CTX_SUB_STATUS(_annotationName)) as ProcessStatus
     }
 
     override property get ErrorMessage() : String {
-      return _context.get(GScanner.CTX_ERROR_MSG) as String
+      return _context.get(GScanner.CTX_ERROR_MSG(_annotationName)) as String
     }
   }
 
