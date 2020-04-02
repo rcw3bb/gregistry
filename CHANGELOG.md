@@ -1,4 +1,15 @@
 # Changelog
+
+## 1.2.0 : 2020-04-03
+
+### New
+
+* A new process method signature with only the exec parameter.
+
+### Update
+
+* The annotation parameter of the exec block is now generic.
+
 ## 1.1.0 : 2020-04-02
 
 ### Update

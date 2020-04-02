@@ -42,7 +42,7 @@ The **Instance static property** of **GScanner class** is only way to have an in
 | **clearCache**()                                             | Clears the cache of the registry.                            |
 | **clearCacheByType**&lt;TYPE_ANNOTATION&gt;(**type** : Type&lt;TYPE_ANNOTATION&gt;) | Clears the cache of the registry of a particular annotation type. |
 | **extract**&lt;TYPE_ANNOTATION&gt;(**annotation** : Type&lt;TYPE_ANNOTATION&gt;) : List&lt;IAnnotationMetaBase&gt; | Retrieve from the registry a group of classes marked by a particular annotation. |
-| **process**&lt;TYPE_ANNOTATION, TYPE_OBJECT>(**annotation** : Type&lt;TYPE_ANNOTATION&gt;, **exec**(context : Map&lt;String, Object&gt;, annotation : Object, instance : TYPE_OBJECT) : boolean) : IProcessOutput | Process a group of classes marked by a particular annotation one by one through the **exec parameter**. |
+| **process**&lt;TYPE_ANNOTATION, TYPE_OBJECT>(**exec**(context : Map&lt;String, Object&gt;, annotation : TYPE_ANNOTATION, instance : TYPE_OBJECT) : boolean) : IProcessOutput | Process a group of classes marked by a particular **annotation** one by one through the **exec parameter**. |
 | **Registry** : List&lt;IType&gt;                             | Returns all the classes enlisted to the registry.            |
 
 ## The exec parameter of the process method
@@ -78,12 +78,12 @@ The implementation of this interface holds the status after completing the execu
 | ----------- | ---------------- |
 | Group ID    | xyz.ronella.gosu |
 | Artifact ID | gregistry        |
-| Version     | 1.1.0            |
+| Version     | 1.2.0            |
 
 > Using gradle, this can be added as a dependency entry like the following:
 >
 > ```groovy
-> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.1.0'
+> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.2.0'
 > ```
 
 #### Sample Usage
@@ -123,20 +123,9 @@ class ManagedClass implements IEnlist, Serializable {
 ```gosu
 uses xyz.ronella.gosu.gregistry.GScanner
 
-var output = GScanner.Instance.process<MyAnnotation, ManagedClass>(
-    MyAnnotation
-    , \ ___ctx, ___annotation, ___instance -> { //Execute logic
-
-  var name : String
-
-  if (___annotation typeis MyAnnotation) {
-    name = ___annotation.name()
-  }
-
-  if (___instance typeis ManagedClass) {
-    ___instance.hello(name)
-  }
-
+GScanner.Instance.process<MyAnnotation, ManagedClass>(
+    \ ___ctx, ___annotation, ___instance -> { //Execute logic
+    ___instance.hello(___annotation.name())
   return true
 })
 ```
