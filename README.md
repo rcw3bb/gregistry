@@ -70,6 +70,16 @@ The implementation of this interface holds the status after completing the execu
 | SubStatus     | This is normally equal to the overall status except when the exec parameter returns false and causes the process method to CutShort its processing. |
 | Error Message | This has value of there's any error that occurs while running the process method. |
 
+## JVM Options
+
+The configurable part of GRegistry.
+
+| Option                | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| GRegEnlistCacheSize   | Controls the size of the cache in memory that the Registry can hold. Anything that go beyond this size will be persisted and still part of the cache. |
+| GRegInstanceCacheSize | Controls the size of the instance cache that the processor can hold in memory. Anything that go beyond this size will be persisted and still part of the cache. |
+| GRegTagMetaCacheSize  | Controls the size of the IAnnotationMataBase cache that the processor can hold in memory. Anything that go beyond this size will be persisted and still part of the cache. |
+
 ## Usage
 
 #### As a Code Dependency to Your Gosu Project
@@ -78,12 +88,12 @@ The implementation of this interface holds the status after completing the execu
 | ----------- | ---------------- |
 | Group ID    | xyz.ronella.gosu |
 | Artifact ID | gregistry        |
-| Version     | 1.2.0            |
+| Version     | 1.3.0            |
 
 > Using gradle, this can be added as a dependency entry like the following:
 >
 > ```groovy
-> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.2.0'
+> compile group: 'xyz.ronella.gosu', name: 'gregistry', version: '1.3.0'
 > ```
 
 #### Sample Usage

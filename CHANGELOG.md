@@ -1,4 +1,9 @@
 # Changelog
+## 1.3.0 : 2020-04-03
+
+### New
+
+* JVM options that can control the size of the internal cache.
 
 ## 1.2.0 : 2020-04-03
 
